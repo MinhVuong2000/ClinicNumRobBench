@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "clinicnumrobbench"
+version = "1.0.0"
+description = "ClinicNumRobBench"
+authors = ["Minh-Vuong Nguyen <minhvuong160620@gmail.com>"]
+readme = "README.md"
+packages = [{include = "clinicnumrobbench"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+pydantic = "^2.6.4"
+requests = "^2.32.3"
+python-dotenv = "^1.0.1"
+pydantic-core = "^2.16.3"
+pydantic-settings = "^2.2.1"
+pydantic-settings-yaml = "^0.2.0"
+tiktoken = "^0.11.0"
+openai = "^1.108.0"
+azure-identity = "^1.25.0"
+backoff = "^2.2.1"
+scikit-learn = "^1.7.2"
+datasets = "^2.15.0"
+torch = "^2.0.0"
+accelerate = "^1.10.1"
+tabulate = "^0.9.0"
+transformers = "^4.57.1"
+matplotlib = "^3.10.7"
+packaging = "^25.0"
+ninja = "^1.13.0"
+wordcloud = "^1.9.4"
+plotly = "^6.5.0"
+nbformat = "^5.10.4"
+lexical-diversity = "^0.1.1"
+httpx = "^0.28.1"
+termcolor = "^3.3.0"
+papermill = "^2.7.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.10.1"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+mypy = "^1.7.0"
+pre-commit = "^3.5.0"
+ipykernel = "^7.0.1"
+notebook = "^7.5.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["numeric_reasoning"]
+
+[tool.mypy]
+python_version = "3.8"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true

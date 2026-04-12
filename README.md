@@ -35,40 +35,59 @@ Official Implementation of ["How Robust Are Large Language Models for Clinical N
    poetry install
    ```
 
-#### Install git-lfs as needed
-```bash
-wget https://github.com/git-lfs/git-lfs/releases/download/v3.2.0/git-lfs-linux-amd64-v3.2.0.tar.gz
-tar xvf git-lfs-linux-amd64-v3.2.0.tar.gz
-cd git-lfs-3.2.0/
-chmod +x install.sh
-sed -i 's|^prefix="/usr/local"$|prefix="$HOME/.local"|' install.sh
-mkdir -p ~/.local/bin/
-export PATH="$HOME/.local/bin:$PATH"
-./install.sh
-git-lfs --version
-cd ..
-git lfs install
-git lfs pull
-```
-
 ## Build benchmark
-### Format data and extract numeracy samples from MIMIC-IV ED & MIMIC-IV dataset
+### Format data and extract vitalsigns samples from MIMIC-IV & MIMIC-IV-ED dataset
 ```bash
-python data_creation/filter_num_data.py 2>&1 | tee data/log/filter_num_data.log
+papermill clinicnumrobbench/data_creation/preprocess_mimic4_samples.ipynb clinicnumrobbench/data_creation/preprocess_mimic4_samples.ipynb
 ```
+After finishing, A file `data/mimiciv/mimic4ed/200_sampled.csv` will be created with 200 vitalsigns records from MIMIC-IV & MIMIC-IV-ED dataset from stratified sampling.
+
 ### Build data
+#### Build structured and templated data
 ```bash
-python data_creation/create_structure.py 2>&1 | tee data/log/create_structure.log
-python data_creation/create_semi_structure.py 2>&1 | tee data/log/create_semi_structure.log
-python data_creation/create_padding_semi_structure.py 2>&1 | tee data/log/create_padding_semi_structure.log
-python data_creation/create_unstructure.py 2>&1 | tee data/log/create_unstructure.log
+python clinicnumrobbench/data_creation/create_x_structure.py --context-mode structured 2>&1 | tee log/data/create_structured.log
+python clinicnumrobbench/data_creation/create_x_structure.py --context-mode templated 2>&1 | tee log/data/create_templated.log
 ```
 Return data has format for each row:
-- question
-- answer
-- data_source: original datasets & sub-category derived
+- question: context and question
+- answer: answer in number/date
+- data_source: sub-category derived
+
+You also can run with notebook [`clinicnumrobbench/data_creation/create_x_structure.ipynb`](clinicnumrobbench/data_creation/create_x_structure.ipynb). 
+- Set `context_mode` in the first cell: "structured" for structured data, "templated" for templated data
+- Then run:
+```bash
+papermill clinicnumrobbench/data_creation/create_x_structure.ipynb clinicnumrobbench/data_creation/create_x_structure.ipynb
+```
+
+#### Build realistic variant context data
+1. Create an `.env` file in the root directory following the `.env.example` file
+2. Extract template & realistic patient note & templates from Open Patients
+```bash
+python clinicnumrobbench/data_creation/extract_vital_sign_open_patients.py --model-name gpt-4.1-mini --batch-size 4 --output-path data/open_patients_extracted_vital_sign_raw.csv
+```
+An csv file at `output_path` with columns: `_id,description,extracted_vital_sign_text,extracted_vital_sign_json` will be created.
+- _id: id from Open Patients data
+- description: the patient note
+- extracted_vital_sign_text: the extracted vital signs text. E.g: 
+```text
+"T: 39.5 C, BP: 90/60 HR: 120/min RR: 40/min"
+```
+- extracted_vital_sign_json: the extracted vital signs json. E.g: 
+```text
+"{'temperature': {'text': 'T: 39.5 C', 'number': '39.5', 'unit': 'C'}, 'heart_rate': {'text': 'HR: 120/min', 'number': '120', 'unit': 'min'}, 'respiratory_rate': {'text': 'RR: 40/min', 'number': '40', 'unit': 'min'}, 'oxygen_saturation': {'text': None, 'number': None, 'unit': None}, 'blood_pressure': {'text': 'BP: 90/60', 'number': '90/60', 'unit': None}}"
+```
+
+Run following command to create Realistic variant context data & ablation data for analysis
+```bash
+papermill clinicnumrobbench/data_creation/create_realistic_var.ipynb clinicnumrobbench/data_creation/create_realistic_var.ipynb
+```
+Then, new folders are created: `natural`, `ablation_var_retrieval`, `ablation_var_calc`, `ablation_var_comparison`, `ablation_var_sum`.
 
 ## Run LLM to get responses
+replace `data_type` in `scripts/generate.sh` with proper format that need to run with:
+- structured, templated, natural: main format representation
+- ablation_var_sum, ablation_var_comparison, ablation_var_calc, ablation_var_retrieval: ablation study for impact of variant template factors
 ```bash
 sh scripts/generate.sh
 ```
@@ -80,6 +99,16 @@ sh scripts/eval.sh
 ```
 
 ## Analysis
+### Fine-grained on sub-categories
+please check file `clinicnumrobbench/analysis/fine_grain_comparison_summary.py`
+```bash
+python3 clinicnumrobbench/analysis/fine_grain_comparison_summary.py --prompt_type zero_shot_cot --data_dir outputs --task comparison
+python3 clinicnumrobbench/analysis/fine_grain_comparison_summary.py --prompt_type zero_shot_cot --data_dir outputs --task summary
+```
+
+### Lexical Diversity
+please check file `clinicnumrobbench/analysis/check_lexical_diversity.py` & `clinicnumrobbench/analysis/medcalc_comparison.ipynb`
+
 
 ## Citation
 If you find this paper or the repo useful for your work, please consider citing the paper
