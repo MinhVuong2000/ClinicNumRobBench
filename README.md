@@ -1,8 +1,9 @@
 # ClinicNumRobBench
 Official Implementation of ["How Robust Are Large Language Models for Clinical Numeracy? An Empirical Study on Numerical Reasoning Abilities in Clinical Contexts"](#).
 
-## Project Structure
+DATASET: Pending URL on [PhysioNet](https://physionet.org/) due to editor reviewing
 
+![Dataset Overview](assets/datasets_comparison.png "Dataset Overview")
 
 ## Environment Setup
 
@@ -36,14 +37,20 @@ Official Implementation of ["How Robust Are Large Language Models for Clinical N
    ```
 
 ## Build benchmark
-### Format data and extract vitalsigns samples from MIMIC-IV & MIMIC-IV-ED dataset
+
+You can get benchmark data from 2 sources:
+1. Uploaded data on [PhysioNet](https://physionet.org/): pending URL, under review by Editor
+2. Build your own data based on 2 steps below:
+![Full Dataset Construction Pipeline](assets/full_context_flow.png "Full Dataset Construction Pipeline")
+
+### 1. Format data and extract vitalsigns samples from MIMIC-IV & MIMIC-IV-ED dataset
 ```bash
 papermill clinicnumrobbench/data_creation/preprocess_mimic4_samples.ipynb clinicnumrobbench/data_creation/preprocess_mimic4_samples.ipynb
 ```
 After finishing, A file `data/mimiciv/mimic4ed/200_sampled.csv` will be created with 200 vitalsigns records from MIMIC-IV & MIMIC-IV-ED dataset from stratified sampling.
 
-### Build data
-#### Build structured and templated data
+### 2. Build data
+#### 2.1. Build structured and templated data
 ```bash
 python clinicnumrobbench/data_creation/create_x_structure.py --context-mode structured 2>&1 | tee log/data/create_structured.log
 python clinicnumrobbench/data_creation/create_x_structure.py --context-mode templated 2>&1 | tee log/data/create_templated.log
@@ -60,7 +67,7 @@ You also can run with notebook [`clinicnumrobbench/data_creation/create_x_struct
 papermill clinicnumrobbench/data_creation/create_x_structure.ipynb clinicnumrobbench/data_creation/create_x_structure.ipynb
 ```
 
-#### Build realistic variant context data
+#### 2.2. Build realistic variant context data
 1. Create an `.env` file in the root directory following the `.env.example` file
 2. Extract template & realistic patient note & templates from Open Patients
 ```bash
@@ -93,12 +100,14 @@ sh scripts/generate.sh
 ```
 
 ## Evaluate
-### Baseline
 ```bash
 sh scripts/eval.sh
 ```
 
+![Main Results](assets/main_results.png "Main Results")
+
 ## Analysis
+
 ### Fine-grained on sub-categories
 please check file `clinicnumrobbench/analysis/fine_grain_comparison_summary.py`
 ```bash
@@ -108,7 +117,6 @@ python3 clinicnumrobbench/analysis/fine_grain_comparison_summary.py --prompt_typ
 
 ### Lexical Diversity
 please check file `clinicnumrobbench/analysis/check_lexical_diversity.py` & `clinicnumrobbench/analysis/medcalc_comparison.ipynb`
-
 
 ## Citation
 If you find this paper or the repo useful for your work, please consider citing the paper
