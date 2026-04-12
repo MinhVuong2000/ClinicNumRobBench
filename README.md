@@ -3,7 +3,7 @@ Official Implementation of ["How Robust Are Large Language Models for Clinical N
 
 DATASET: Pending URL on [PhysioNet](https://physionet.org/) due to editor reviewing
 
-![Dataset Overview](assets/datasets_comparison.png "Dataset Overview")
+![Full Dataset Construction Pipeline](assets/full_context_flow.png "Full Dataset Construction Pipeline")
 
 ## Environment Setup
 
@@ -41,7 +41,6 @@ DATASET: Pending URL on [PhysioNet](https://physionet.org/) due to editor review
 You can get benchmark data from 2 sources:
 1. Uploaded data on [PhysioNet](https://physionet.org/): pending URL, under review by Editor
 2. Build your own data based on 2 steps below:
-![Full Dataset Construction Pipeline](assets/full_context_flow.png "Full Dataset Construction Pipeline")
 
 ### 1. Format data and extract vitalsigns samples from MIMIC-IV & MIMIC-IV-ED dataset
 ```bash
