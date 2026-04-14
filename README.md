@@ -1,5 +1,5 @@
 # ClinicNumRobBench
-Official Implementation of ["How Robust Are Large Language Models for Clinical Numeracy? An Empirical Study on Numerical Reasoning Abilities in Clinical Contexts"](#).
+Official Implementation of ["How Robust Are Large Language Models for Clinical Numeracy? An Empirical Study on Numerical Reasoning Abilities in Clinical Contexts"](https://arxiv.org/abs/2604.11133).
 
 DATASET: Pending URL on [PhysioNet](https://physionet.org/) due to editor reviewing
 
@@ -118,4 +118,16 @@ python3 clinicnumrobbench/analysis/fine_grain_comparison_summary.py --prompt_typ
 please check file `clinicnumrobbench/analysis/check_lexical_diversity.py` & `clinicnumrobbench/analysis/medcalc_comparison.ipynb`
 
 ## Citation
+
 If you find this paper or the repo useful for your work, please consider citing the paper
+```
+@misc{nguyen2026robustlargelanguagemodels,
+      title={How Robust Are Large Language Models for Clinical Numeracy? An Empirical Study on Numerical Reasoning Abilities in Clinical Contexts}, 
+      author={Minh-Vuong Nguyen and Fatemeh Shiri and Zhuang Li and Karin Verspoor},
+      year={2026},
+      eprint={2604.11133},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2604.11133}, 
+}
+```
