@@ -43,6 +43,8 @@ You can get benchmark data from 2 sources:
 2. Build your own data based on 2 steps below:
 
 ### 1. Format data and extract vitalsigns samples from MIMIC-IV & MIMIC-IV-ED dataset
+- Follow [clinicnumrobbench/data_creation/README.md](clinicnumrobbench/data_creation/README.md) to get permissions & download MIMIC datasets
+- After finishing downloading data and move to correct folders, run:
 ```bash
 papermill clinicnumrobbench/data_creation/preprocess_mimic4_samples.ipynb clinicnumrobbench/data_creation/preprocess_mimic4_samples.ipynb
 ```
